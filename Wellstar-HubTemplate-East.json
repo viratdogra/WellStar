@@ -1,0 +1,389 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_Hub_name": {
+            "type": "String"
+        },
+        "virtualNetworkGateways_VNetGateway_name": {
+            "type": "String"
+        },
+        "publicIPAddresses_VNetGatewayIP_name": {
+            "type": "string"
+        },
+        "publicIPAddresses_VNetGatewayIP_address": {
+            "type": "string"
+        },
+        "resourceGroup_name": {
+            "type": "String"
+        },
+        "region_location":{
+            "type": "string"
+        },
+        "VNet_addressPrefix": {
+            "type": "string"
+        },
+        "PrivateLB_subnet_IPaddress": {
+            "type": "string"
+        },
+        "PrivateLB_subnet_name": {
+            "type": "string"
+        },
+        "Bast_Subnet_Name": {
+            "type": "string"
+        },
+        "Bast_Subnet_Ipaddress": {
+            "type": "string"
+        },
+        "DC_subnet_IPaddress": {
+            "type": "string"
+        },
+        "DC_subnet_name": {
+            "type": "string"
+        },
+        "Infra_subnet_name": {
+            "type": "string"
+        },
+        "Infra_Subnet_Ipaddress": {
+            "type": "string"
+        },
+        "PaloAlto_subnet_IPaddress": {
+            "type": "string"
+        },
+        "PaloAlto_subnet_name": {
+            "type": "string"
+        },
+        "PaloAlto2_subnet_IPaddress": {
+            "type": "string"
+        },
+        "PaloAlto2_subnet_name": {
+            "type": "string"
+        },
+        "PaloAlto3_subnet_IPaddress": {
+            "type": "string"
+        },
+        "PaloAlto3_subnet_name": {
+            "type": "string"
+        },
+        "GatewaySubnet_IPaddress": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('publicIPAddresses_VNetGatewayIP_name')]",
+            "location": "[parameters('region_location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "ipAddress": "[parameters('publicIPAddresses_VNetGatewayIP_address')]",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('virtualNetworks_Hub_name')]",
+            "location": "[parameters('region_location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('VNet_addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('PrivateLB_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('PrivateLB_subnet_IPaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('PaloAlto_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('PaloAlto_subnet_IPaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('Bast_Subnet_Name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('Bast_Subnet_Ipaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('PaloAlto2_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('PaloAlto2_subnet_IPaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('PaloAlto3_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('PaloAlto3_subnet_IPaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[parameters('GatewaySubnet_IPaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('Infra_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('Infra_Subnet_Ipaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('DC_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('DC_subnet_IPaddress')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                    ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/GatewaySubnet')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('GatewaySubnet_IPaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('PaloAlto_subnet_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('PaloAlto_subnet_IPaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('PaloAlto2_subnet_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('PaloAlto2_subnet_IPaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('PaloAlto3_subnet_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('PaloAlto3_subnet_IPaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('PrivateLB_subnet_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('PrivateLB_subnet_IPaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('DC_subnet_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('DC_subnet_IPaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('Infra_subnet_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('Infra_Subnet_Ipaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-11-01",
+            "name": "[concat(parameters('virtualNetworks_Hub_name'), '/', parameters('Bast_Subnet_Name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('Bast_Subnet_Ipaddress')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+           }
+        },
+        //{
+          //  "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            //"apiVersion": "2019-06-01",
+            //"name": "[concat(parameters('storageAccount_name'), '/default/bootdiagnostics-jumpbox1-89e4d7a8-a0b4-482e-a914-5bc0a092930a')]",
+            //"tags": "[parameters('resourceTags')]",
+            //"dependsOn": [
+              //  "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccount_name'), 'default')]",
+               // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccount_name'))]"
+            //],
+            //"properties": {
+              //  "publicAccess": "None"
+            //}
+        //},
+        //{
+          //  "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            //"apiVersion": "2019-06-01",
+            //"name": "[concat(parameters('storageAccount_name'), '/default/bootdiagnostics-jumpbox2-c1c475bc-98dc-400c-add8-438cafae949e')]",
+            //"tags": "[parameters('resourceTags')]",
+            //"dependsOn": [
+              //  "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccount_name'), 'default')]",
+              //  "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccount_name'))]"
+            //],
+            //"properties": {
+              //  "publicAccess": "None"
+            //}
+        //},
+        //  {
+        //     "type": "Microsoft.Network/bastionHosts",
+        //     "apiVersion": "2019-11-01",
+        //     "name": "[parameters('bastionHosts_AzureBastion_name')]",
+        //     "location": "[parameters('region_location')]",
+        //     "tags": "[parameters('resourceTags')]",
+        //     "dependsOn": [
+        //         "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Hub_name'))]",
+        //         "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_Hub_ip_name'))]"
+        //     ],
+        //     "properties": {
+        //         "dnsName": "bst-3e7820ea-fcc9-432e-8018-60856ce3b8a7.bastion.azure.com",
+        //         "ipConfigurations": [
+        //             {
+        //                 "name": "IpConf",
+        //                 "properties": {
+        //                     "privateIPAllocationMethod": "Dynamic",
+        //                     "publicIPAddress": {
+        //                         //"id": "[parameters('publicIPAddresses_Hub_ip_name')]",
+        //                         "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_Hub_ip_name'))]"
+        //                     },
+        //                     "subnet": {
+        //                         //"id": "[concat(parameters('virtualNetworks_Hub_name'), concat('/subnets/', parameters('bastionHosts_AzureBastion_name'), 'Subnet'))]"
+        //                         "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_Hub_name'), concat(parameters('bastionHosts_AzureBastion_name'), 'Subnet'))]"
+        //                     }
+        //                 }
+        //             }
+        //         ]
+        //     }
+        // },
+        {
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "apiVersion": "2019-11-01",
+            "name": "[parameters('virtualNetworkGateways_VNetGateway_name')]",
+            "location": "[parameters('region_location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNetGatewayIP_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_Hub_name'), 'GatewaySubnet')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNetGatewayIP_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_Hub_name'), 'GatewaySubnet')]"
+                            }
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "VpnGw1",
+                    "tier": "VpnGw1"
+                },
+                "gatewayType": "Vpn",
+                "vpnType": "RouteBased",
+                "enableBgp": false,
+                "activeActive": false,
+                "bgpSettings": {
+                    "asn": 65515,
+                    "bgpPeeringAddress": "10.1.6.30",
+                    "peerWeight": 0
+                },
+                "vpnGatewayGeneration": "Generation1"
+            }
+        }
+    ]
+}

@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VNet_addressPrefix": {
+            "value": "10.244.0.0/23"
+        },
+        "virtualNetworks_Hub_name": {
+            "value": "VNET-USEAST2-EA-Hub"
+        },
+        "publicIPAddresses_VNetGatewayIP_name": {
+            "value": "PIP-GatewaySubnetip"
+        },
+        "virtualNetworkGateways_VNetGateway_name": {
+            "value": "VGW-VNET-USEAST2-EA-Hub"
+        },
+        "publicIPAddresses_VNetGatewayIP_address": {
+            "value": "40.71.182.128"
+        },
+        "resourceGroup_name": {
+            "value": "RG-NetworHUB-Prod"
+        },
+        "region_location": {
+            "value": "eastus2"
+        },
+        "Bast_Subnet_Name": {
+            "value": "AzureBastionSubnet"
+        },
+        "Bast_Subnet_Ipaddress": {
+            "value": "10.244.0.32/27"
+        },
+        "DC_subnet_IPaddress": {
+            "value": "10.244.0.160/27"
+        },
+        "DC_subnet_name": {
+            "value": "SNET-DC-10.244.0.160-27"
+        },
+        "Infra_subnet_name": {
+            "value": "SNET-Infra-10.244.1.0-24"
+        },
+        "Infra_Subnet_Ipaddress": {
+            "value": "10.244.1.0/24"
+        },
+        "PrivateLB_subnet_IPaddress": {
+            "value": "10.244.0.192/27"
+        },
+        "PrivateLB_subnet_name": {
+            "value": "SNET-LB-10.244.0.192-27"
+        },
+        "PaloAlto_subnet_name": {
+            "value": "SNET-PaloAlto1-10.244.0.64-27"
+        },
+        "PaloAlto_subnet_IPaddress": {
+            "value": "10.244.0.64/27"
+        },
+        "PaloAlto2_subnet_name": {
+            "value": "SNET-PaloAlto2-10.244.0.96-27"
+        },
+        "PaloAlto2_subnet_IPaddress": {
+            "value": "10.244.0.96/27"
+        },
+        "PaloAlto3_subnet_name": {
+            "value": "SNET-PaloAlto3-10.244.0.128-27"
+        },
+        "PaloAlto3_subnet_IPaddress": {
+            "value": "10.244.0.128/27"
+        },
+        "GatewaySubnet_IPaddress": {
+            "value": "10.244.0.0/27"
+        }      
+    }
+}
